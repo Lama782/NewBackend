@@ -14,11 +14,23 @@ namespace sda_onsite_2_csharp_backend_teamwork.src.Controllers
     }
 
 
-    [HttpGet]
-    public List<ProductReadDto> GetAll()
-    {
-      return _productService.GetAll();
 
+    // [HttpGet]
+    // [ProducesResponseType(StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    // public ActionResult<IEnumerable<ProductReadDto>> FindAll([FromQuery(Name = "searchBy")] string searchBy)
+    //     return Ok(_productService.FindAll());
+    // }
+
+    // [HttpGet]
+    // public List<ProductReadDto> GetAll()
+    // {
+    //   return _productService.GetAll();
+    // }
+[HttpGet]
+    public List<ProductReadDto> GetAll ( [FromQuery] GetAllOptions getAllOptions )
+    {
+      return _productService.GetAll(getAllOptions);
     }
 
 
@@ -36,16 +48,18 @@ namespace sda_onsite_2_csharp_backend_teamwork.src.Controllers
       return BadRequest();
 
     }
-
-    // [HttpDelete("{id}")]
-    // public IEnumerable<Product> DeleteOne(Guid id)
-    // {
-    //   return _productService.DeleteOne(id);
-
-    // }
-
-
-
+    [HttpPatch("{name}")]
+    public ActionResult<bool> UpdateOne([FromRoute] string name, [FromBody] ProductUpdateDto updateDto)
+    {
+      var updated = _productService.UpdateOne(name, updateDto);
+      return Ok(updated);
+    }
+    [HttpDelete("{name}")]
+    public ActionResult<bool> DeleteOneAsync([FromRoute] string name)
+    {
+      var deleted = _productService.DeleteOne(name);
+      return Ok(deleted);
+    }
     [HttpGet("{name}")]
     public ProductReadDto FindOne(string name)
     {

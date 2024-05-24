@@ -1,48 +1,23 @@
 using System.Collections.Generic;
-
-
 using sda_onsite_2_csharp_backend_teamwork.src.DTOs;
-
 using Microsoft.EntityFrameworkCore;
-
 using sda_onsite_2_csharp_backend_teamwork.src.Entities;
 using sda_onsite_2_csharp_backend_teamwork.src.Services;
 using Npgsql;
 using sda_onsite_2_csharp_backend_teamwork.src.Enums;
-
-
 namespace sda_onsite_2_csharp_backend_teamwork.src.Databases;
-
-
-    public class DatabaseContext : DbContext
+public class DatabaseContext : DbContext
+{
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<Product> Products {get; set;}
-        public DbSet<User> Users { get; set; }
-
-
-        private IConfiguration _config;
-
-        public DatabaseContext( IConfiguration config) 
-
-        {
-            _config = config;
-        }
-            protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            var dataSourceBuilder = new NpgsqlDataSourceBuilder(@$"Host={_config["Db:Host"]};Username={_config["Db:Username"]};Password={_config["Db:Password"]};Database={_config["Db:Database"]}");
-            dataSourceBuilder.MapEnum<Role>();
-            var dataSource =  dataSourceBuilder.Build();
-            optionsBuilder.UseNpgsql(dataSource).UseSnakeCaseNamingConvention();
-            }
-            protected override void OnModelCreating( ModelBuilder modelBuilder){
-             modelBuilder.HasPostgresEnum<Role>();
-          }
-
-
-    
+        modelBuilder.HasPostgresEnum<Role>();
     }
+}
 
 
 

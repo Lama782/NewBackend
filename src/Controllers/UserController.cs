@@ -59,16 +59,20 @@ namespace sda_onsite_2_csharp_backend_teamwork.src.Controllers
             return BadRequest();
         }
 
+        [HttpPatch("{name}")]
+        public ActionResult<bool> UpdateOne([FromRoute] string name, [FromBody] UserUpdateDto updateDto)
+        {
+            var updated = _userService.UpdateOne(name, updateDto);
+            return Ok(updated);
+        }
+        [HttpDelete("{name}")]
+        public ActionResult<bool> DeleteOne([FromRoute] string name)
+        {
+            Console.WriteLine($"name from query {name}");
+            var deleted = _userService.DeleteOne(name);
+            return NoContent();
+        }
 
-
-
-
-
-        // [HttpDelete("{id}")]
-        // public IEnumerable<User> DeleteOne(Guid id)
-        // {
-        //     return _userService.DeleteOne(id);
-        // }
         [HttpGet("{email}")]
         public UserReadDto FindOne(string email)
         {

@@ -1,17 +1,15 @@
 
-
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using sda_onsite_2_csharp_backend_teamwork.src.Abstractions;
 using sda_onsite_2_csharp_backend_teamwork.src.DTOs;
 using sda_onsite_2_csharp_backend_teamwork.src.Entities;
 using sda_onsite_2_csharp_backend_teamwork.src.Utils;
-
 namespace sda_onsite_2_csharp_backend_teamwork.src.Services;
-
 public class UserService : IUserService
 {
     private IUserRepository _userRepository;
@@ -31,6 +29,38 @@ public class UserService : IUserService
         var users = _userRepository.GetAll();
         var userRead = users.Select(_mapper.Map<UserReadDto>);
         return userRead.ToList();
+    }
+
+
+    public ActionResult<bool> DeleteOne(string name)
+    {
+        var foundUser = _userRepository.FindOne(name);
+        if (foundUser is null)
+        {
+            Console.WriteLine($"user is null in service file");
+            return false;
+        }
+        Console.WriteLine($"user is not null in service file");
+        return _userRepository.DeleteOne(foundUser);
+    }
+
+    public bool UpdateOne(string name, UserUpdateDto updateDto)
+    {
+        var foundUser = _userRepository.FindOne(name);
+        Console.WriteLine($"user is not null in service file");
+        if (foundUser == null)
+        {
+            return false;
+        }
+        foreach (var property in updateDto.GetType().GetProperties())
+        {
+            if (property.GetValue(updateDto) is null)
+            {
+                property.SetValue(updateDto, foundUser.GetType().GetProperty(property.Name).GetValue(foundUser));
+            }
+        }
+        var mappedUser = _mapper.Map(updateDto, foundUser);
+        return _userRepository.UpdateOne(mappedUser);
     }
     public UserReadDto SignUp(UserCreateDto userCreateDto)
     {
@@ -55,6 +85,10 @@ public class UserService : IUserService
         return userRead;
 
     }
+
+
+    
+
     // public IEnumerable<User> DeleteOne(Guid id)
     // {
     //     return _userRepository.DeleteOne(id);
@@ -70,7 +104,8 @@ public class UserService : IUserService
     public String SignIn(UserSignInDto userSign)
     {
 
-        User? user = _userRepository.FindOne(userSign.Email);
+        User? user = _userRepository.FindOneByEmail(userSign.Email);
+        // User? user = _userRepository.FindOneByEmail(userSign.Email);
         if (user is null) return null;
         byte[] pepper = Encoding.UTF8.GetBytes(_config["Jwt:Pepper"]!);
 
@@ -81,7 +116,7 @@ public class UserService : IUserService
 
         // return userRead;   
 
-        var claims = new[] 
+        var claims = new[]
                      {
             new Claim(ClaimTypes.Name, user.Name),
             new Claim(ClaimTypes.Role, user.role.ToString()),

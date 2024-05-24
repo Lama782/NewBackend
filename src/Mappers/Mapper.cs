@@ -19,24 +19,29 @@ namespace sda_onsite_2_csharp_backend_teamwork.src.Mappers
             CreateMap<UserCreateDto, User>();
             CreateMap<User, UserCreateDto>();
 
+            CreateMap<UserUpdateDto, User>()
+            .ForAllMembers(opts => opts.Condition((src, dest, srcProperty) => srcProperty != null));
+
             CreateMap<Product, ProductReadDto>();
             CreateMap<ProductReadDto, Product>();
             CreateMap<ProductCreateDto, Product>();
             CreateMap<Product, ProductCreateDto>();
-
-
-
 
             CreateMap<OrderItem, OrderItemReadDto>();
             CreateMap<OrderItemReadDto, OrderItem>();
             CreateMap<OrderItemCreateDto, OrderItem>();
             CreateMap<OrderItem, OrderItemCreateDto>();
 
-
             CreateMap<Order, OrderReadDto>();
             CreateMap<OrderReadDto, Order>();
             CreateMap<OrderCreatDto, Order>();
             CreateMap<Order, OrderCreatDto>();
+
+    // CreateMap<ProductUpdateDto, Product>()
+    //          .ForAllMembers(opts => opts.Condition((src, dest, srcProperty) => srcProperty != null));
+
+            CreateMap<ProductUpdateDto, Product>()
+             .ForAllMembers(opts => opts.Condition((src, dest, srcProperty) => srcProperty != null));
 
         }
     }

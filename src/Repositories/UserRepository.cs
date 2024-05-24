@@ -25,6 +25,27 @@ public class UserRepository : IUserRepository
         return user;
 
     }
+
+public User FindOneByEmail(string email)
+  {
+    return _users.FirstOrDefault(U => U.Email == email);
+  }
+    public bool DeleteOne(User deleteObject)
+    {
+        _users.Remove(deleteObject);
+        Console.WriteLine($"Remove user object in repo file");
+        _databaseContext.SaveChanges();
+        Console.WriteLine($"database saves changes");
+        return true;
+    }
+
+    public bool UpdateOne(User updateObject)
+    {
+        _users.Update(updateObject);
+        _databaseContext.SaveChanges();
+        return true;
+    }
+
     // public IEnumerable<User> DeleteOne(Guid id)
     // {
     //     _users = _users.Where(u => u.Id != id);
@@ -32,9 +53,6 @@ public class UserRepository : IUserRepository
     // }
     public User FindOne(string email)
     {
-
-
         return _users.FirstOrDefault(u => u.Email == email);
-
     }
 }
