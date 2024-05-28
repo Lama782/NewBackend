@@ -20,8 +20,8 @@ builder.Services.AddControllers();
 
 // configuring DB
 var _config = builder.Configuration;
-var dataSourceBuilder = new NpgsqlDataSourceBuilder(@$"Host={_config["Db:Host"]};
-Username={_config["Db:Username"]};Database={_config["Db:Database"]};Password={_config["Db:Password"]}");
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(@$"Host={_config["DB_Host"]};
+Username={_config["DB_Username"]};Database={_config["DB_Database"]};Password={_config["DB_Password"]};Port={_config["DB_Port"]}");
 dataSourceBuilder.MapEnum<Role>();
 var dataSource = dataSourceBuilder.Build();
 builder.Services.AddDbContext<DatabaseContext>((options) =>
@@ -55,7 +55,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins(builder.Configuration["Cors:Origin"]!)
+                          policy.WithOrigins(builder.Configuration["Cors_Origin"]!)
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .SetIsOriginAllowed((host)=>true)
@@ -73,9 +73,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SigningKey"]!))
+            ValidIssuer = builder.Configuration["Jwt_Issuer"],
+            ValidAudience = builder.Configuration["Jwt_Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt_SigningKey"]!))
         };
     });
 var app = builder.Build();
